@@ -32,29 +32,11 @@ const containerStyle = {
       if(!querystring?.length) return showError('No querystring');
 
       querystring = querystring.toLowerCase();
-      const osm_url = `https://nominatim.openstreetmap.org/search?q=city,${querystring}&format=jsonv2`;
-      
-      const osm_res = await axios.get(osm_url).catch(err=>console.log(err));
-      if(!osm_res.data.length) return showError('No place found');
 
-      let osm_id;
-      for(const place of osm_res.data){ //find 1st match that has a city node ID
-        if( place.type === 'city' 
-            && place.osm_type === 'node' 
-            && place.name.toLowerCase() === querystring
-          ){
-          osm_id = place.osm_id;
-          break;
-        }
-        console.log({querystring, p:place.name.toLowerCase()})
-      }
-      if(!osm_id) return showError('No osm_id found');
-
-      const geo_url = `https://nominatim.openstreetmap.org/lookup?osm_ids=N${osm_id}&format=jsonv2&polygon_geojson=1`
+      const geo_url = `https://nominatim.openstreetmap.org/search?city=${querystring}&format=jsonv2&polygon_geojson=1`
       
-      const geo_res = await axios.get(geo_url).catch(err=>console.log(err));
-      if(!geo_res.data) return showError(`No geo data found for osm_id ${osm_id}`);
-      console.log({osm_res, geo_res})
+      const geo_res = await axios.get(geo_url).catch(err => console.log(err));
+
       const geojson = geo_res.data[0].geojson;
       const obj = {
         "type": "FeatureCollection",
