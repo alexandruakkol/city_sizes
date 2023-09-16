@@ -27,7 +27,7 @@ const containerStyle = {
       //TODO: tidy
     }
 
-    async function getPolygon(querystring){
+    async function getPolygon(input_id, querystring){
 
       if(!querystring?.length) return showError('No querystring');
 
@@ -38,33 +38,82 @@ const containerStyle = {
       const geo_res = await axios.get(geo_url).catch(err => console.log(err));
 
       const geojson = geo_res.data[0].geojson;
+      console.log(`geojson${input_id} ${querystring}`, geojson.coordinates)
+
+      const centroid = getCentroidCoords(geojson.coordinates[0]);
+      window.citySizes.centroids[input_id] = centroid;
+      
+      if(input_id === 1) {
+        const translation_vector = getTranslationVector();
+        console.log({translation_vector})
+        geojson.coordinates[0] = translateCoords(geojson.coordinates[0], translation_vector);
+      }
+      
+      const color = input_id === 0 ? 'darkgreen' : 'red';
       const obj = {
         "type": "FeatureCollection",
         "features": [
           {
             "type": "Feature",
-            "properties": {
-              "letter": "G",
-              "color": "blue",
-              "rank": "7",
-              "ascii": "71"
-            },
+            "properties": {color},
             "geometry":geojson
           }
         ]
       };
-      
+
       map.data.addGeoJson(obj);
+
+      map.data.setStyle((feature) => {
+        let color = 'gray';
+        color = feature.getProperty('color');
+        return ({
+          fillColor: color,
+          strokeColor: color,
+          strokeWeight: 2
+        });
+      });
+      
+      if(input_id === 1) return;
       const coord = {lat: geo_res.data[0].lat*1, lng:geo_res.data[0].lon*1};
-      console.log({coord}, {geojson})
+
       const bounds = new window.google.maps.LatLngBounds(coord);
       map.fitBounds(bounds);
       map.setZoom(10);
-      
 
-      map.data.setStyle({
-        fillColor: 'green'
-      });
+    }
+
+    function getCentroidCoords(points){
+      const coords = {x:0, y:0};
+      for(const point of points){
+        coords.x += point[1];
+        coords.y += point[0];
+      }
+      const points_n = points.length;
+      coords.x = Number((coords.x/points_n).toFixed(6));
+      coords.y = Number((coords.y/points_n).toFixed(6));
+      return coords;
+    }
+
+    function getTranslationVector(){
+      const centroidA = window.citySizes.centroids[0];
+      const centroidB = window.citySizes.centroids[1];
+      if(!(centroidA && centroidB)) return showError('No centroids');
+      return {x: (centroidA.x - centroidB.x), y: (centroidA.y - centroidB.y)}
+    }
+
+    function translateCoords(pointsA, translation_vector){
+      const newPoints = [];
+      for(const point of pointsA){
+        const newPoint = [];
+        newPoint.push(point[0] + translation_vector.y);
+        newPoint.push(point[1] + translation_vector.x);
+        newPoints.push(newPoint);
+      }
+      return newPoints;
+    }
+
+    function renderShape(x,y){
+
     }
 
     const onLoad = React.useCallback(function callback(map) {

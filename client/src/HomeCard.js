@@ -6,6 +6,7 @@ import axios from 'axios';
 const HomeCard = (props) => {
 
   const [autocomp_data, setAutocomp_data] = useState([]);
+  const inputs = {};
 
   async function searchCity(string_query){
 
@@ -19,8 +20,11 @@ const HomeCard = (props) => {
     setAutocomp_data(query_res.data.map(city_obj => city_obj.name));
   }
 
-  async function selectCity(autocomp_choice){
-    props.getPolygon(autocomp_choice.value);
+  async function selectCity(input_id, autocomp_choice){
+    inputs[input_id] = autocomp_choice;
+    const other_input_id = Number(!input_id);
+    if(inputs[other_input_id] === autocomp_choice) return; //TODO: global showError
+    props.getPolygon(input_id, autocomp_choice.value);
   }
 
   return (
@@ -29,7 +33,15 @@ const HomeCard = (props) => {
 
       <Autocomplete
         onChange={searchCity}
-        onItemSubmit={selectCity}
+        onItemSubmit={(str_query) => selectCity(0, str_query)}
+        id="searchbar"
+        icon={<IconAt size="0.8rem" />}
+        placeholder="ex. New York"
+        data={autocomp_data}
+      />
+      <Autocomplete
+        onChange={searchCity}
+        onItemSubmit={(str_query) => selectCity(1, str_query)}
         id="searchbar"
         icon={<IconAt size="0.8rem" />}
         placeholder="ex. New York"
