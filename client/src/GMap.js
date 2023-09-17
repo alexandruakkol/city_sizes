@@ -33,20 +33,20 @@ const containerStyle = {
 
       querystring = querystring.toLowerCase();
 
-      const geo_url = `https://nominatim.openstreetmap.org/search?city=${querystring}&format=jsonv2&polygon_geojson=1`
+      const geo_url = `https://nominatim.openstreetmap.org/search?q=${querystring}&format=jsonv2&polygon_geojson=1`
       
       const geo_res = await axios.get(geo_url).catch(err => console.log(err));
 
       //filter out geodata that isn't a polygon
       let geojson, coord;
       for(const place of geo_res.data){
-        if( !(place?.geojson?.type.includes('Polygon') ) ) continue;
+        if( !(place?.geojson?.type.includes('Polygon') && ['city'].includes(place?.addresstype)) ) continue;
         geojson = place.geojson;
         coord = {lat: place.lat*1, lng:place.lon*1};
         break;
       }
       console.log(geojson, coord)
-      if(! (geojson && coord) ) return showError('No polygon found.');
+      if(! (geojson && coord) ) return showError('No city data.');
 
       console.log(`geojson${input_id} ${querystring}`, geojson.coordinates)
       console.log({geo_res})
@@ -73,7 +73,12 @@ const containerStyle = {
       };
 
       const feature = map.data.addGeoJson(obj);
-     
+
+      const previous_feature = window.citySizes.features[input_id];
+      if(previous_feature) map.data.remove(previous_feature[0]);
+
+      window.citySizes.features[input_id] = feature;
+
       map.data.setStyle((feature) => {
         let color = 'gray';
         color = feature.getProperty('color');
@@ -89,21 +94,9 @@ const containerStyle = {
       const bounds = new window.google.maps.LatLngBounds(coord);
       map.fitBounds(bounds);
       map.setZoom(10);
-    }
 
-    // function getCentroidCoords(points){
-    //   console.log({points})
-    //   if(typeof points[0][0] === 'object') 
-    //   const coords = {x:0, y:0};
-    //   for(const point of points){
-    //     coords.x += point[1];
-    //     coords.y += point[0];
-    //   }
-    //   const points_n = points.length;
-    //   coords.x = Number((coords.x/points_n).toFixed(6));
-    //   coords.y = Number((coords.y/points_n).toFixed(6));
-    //   return coords;
-    // }
+      map.data.forEach(feature => {});
+    }
 
     function getTranslationVector(){
       const centroidA = window.citySizes.centroids[0];
@@ -136,7 +129,7 @@ const containerStyle = {
     }, []);
   
     const onUnmount = React.useCallback(function callback(map) {
-      //setMap(null);
+
     }, []);
   
     return isLoaded ? (

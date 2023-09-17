@@ -8,7 +8,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 if(!window.citySizes) 
     window.citySizes = {
-        centroids:{}
+        centroids:{},
+        features:{}
     };
 
 root.render(
