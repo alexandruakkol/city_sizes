@@ -52,31 +52,39 @@ const containerStyle = {
       if(! (geojson && coord) ) return showError('No city data.');
 
       console.log({geo_res})
-      //const centroid = getCentroidCoords(geojson.coordinates[0]);
       window.citySizes.centroids[input_id] = coord;
-      
-      if(input_id === 1) {
-        const translation_vector = getTranslationVector();
-        geojson.coordinates = translateCoords(geojson.coordinates, translation_vector);
-        if(geojson.coordinates.length > 1) geojson.type="MultiPolygon";
+      placePolygon(input_id, geojson);
+
+      if(input_id === 1) {//cache 2nd input geodata
+        window.citySizes.geojson_1.feature = geojson;
+        window.citySizes.geojson_1.centroid = coord;
+      } 
+
+      if( window.citySizes.features[0] && (input_id === 0) && window.citySizes?.geojson_0.feature ){ //if 1st input changed, shift 2nd feature over
+        console.log('replacing 1st');
+        placePolygon(1, window.citySizes.geojson_1.feature, 1);
       }
 
-      const color = input_id === 0 ? 'darkgreen' : 'red';
-      const obj = {
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "type": "Feature",
-            "properties": {color},
-            "geometry":geojson
-          }
-        ]
-      };
+      if(input_id === 0) {
+        window.citySizes.geojson_0.feature = geojson;
+        window.citySizes.geojson_0.centroid = coord;//cache 1st input geodata
+      }
+      
+      map.data.forEach(feature => {});
+    }
 
-      const feature = map.data.addGeoJson(obj);
+    function placePolygon(input_id, geojson, isReplacingSecond=false){
+      if( (input_id === 1) || isReplacingSecond ) {
+        const translation_vector = getTranslationVector(isReplacingSecond);
+        geojson.coordinates = translateCoords(geojson.coordinates, translation_vector);
+        if(geojson.coordinates.length > 1) geojson.type = "MultiPolygon";
+      }
+
+      const geoObj = makeGeoObj(input_id, geojson);
+      const feature = map.data.addGeoJson(geoObj);
 
       const previous_feature = window.citySizes.features[input_id];
-      if(previous_feature) map.data.remove(previous_feature[0]);
+      if( previous_feature ) map.data.remove(previous_feature[0]);
 
       window.citySizes.features[input_id] = feature;
 
@@ -93,14 +101,12 @@ const containerStyle = {
       const bounds = new window.google.maps.LatLngBounds(window.citySizes.centroids[0]);
       map.fitBounds(bounds);
       map.setZoom(10);
-
-      map.data.forEach(feature => {});
     }
 
-    function getTranslationVector(){
+    function getTranslationVector(isReplacingSecond){
       const centroidA = window.citySizes.centroids[0];
-      const centroidB = window.citySizes.centroids[1];
-      if(!(centroidA && centroidB) || isNaN(centroidA.lat+centroidB.lng)) return showError('No centroids');
+      const centroidB = isReplacingSecond ? window.citySizes.geojson_0.centroid : window.citySizes.centroids[1];
+      if(!(centroidA && centroidB) || isNaN(centroidA.lat + centroidB.lng)) return showError('No centroids');
       return {x: (centroidA.lat - centroidB.lat), y: (centroidA.lng - centroidB.lng)};
     }
 
@@ -120,6 +126,22 @@ const containerStyle = {
       }
       return results;
     }
+
+    function makeGeoObj(input_id, geojson){
+
+      const color = input_id === 0 ? 'darkgreen' : 'red';
+
+      return {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "properties": {color},
+            "geometry":geojson
+          }
+        ]
+      };
+    };
 
     const onLoad = React.useCallback(function callback(map) {
       setMap(map);

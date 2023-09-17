@@ -9,7 +9,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 if(!window.citySizes) 
     window.citySizes = {
         centroids:{},
-        features:{}
+        features:{},
+        geojson_0:{},
+        geojson_1:{}
     };
 
 root.render(
