@@ -60,7 +60,7 @@ const containerStyle = {
         window.citySizes.geojson_1.centroid = coord;
       } 
 
-      if( window.citySizes.features[0] && (input_id === 0) && window.citySizes?.geojson_0.feature ){ //if 1st input changed, shift 2nd feature over
+      if( window.citySizes.features[0] && (input_id === 0) && window.citySizes?.geojson_1.feature ){ //if 1st input changed, shift 2nd feature over
         console.log('replacing 1st');
         placePolygon(1, window.citySizes.geojson_1.feature, 1);
       }

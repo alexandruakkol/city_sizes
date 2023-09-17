@@ -10,7 +10,7 @@ const HomeCard = (props) => {
 
   async function searchCity(string_query){
 
-    if(autocomp_data.includes(string_query)) return;
+    if(autocomp_data.includes(string_query) || !string_query.length) return;
 
     const query_res = await axios.get(`http://localhost:8001/api/cities?q=${string_query}`)
       .catch(err => console.log(err));
