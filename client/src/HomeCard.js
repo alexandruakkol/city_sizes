@@ -6,7 +6,7 @@ import axios from 'axios';
 const HomeCard = (props) => {
 
   const [autocomp_data, setAutocomp_data] = useState([]);
-  const inputs = {};
+  const [inputs, setInputs] = useState({});
 
   async function searchCity(string_query){
 
@@ -21,7 +21,7 @@ const HomeCard = (props) => {
   }
 
   async function selectCity(input_id, autocomp_choice){
-    inputs[input_id] = autocomp_choice;
+    setInputs({...inputs, [input_id]:autocomp_choice});
     const other_input_id = Number(!input_id);
     if(inputs[other_input_id] === autocomp_choice) return; //TODO: global showError
     props.getPolygon(input_id, autocomp_choice.value);
@@ -40,6 +40,7 @@ const HomeCard = (props) => {
         data={autocomp_data}
       />
       <Autocomplete
+        disabled={!inputs[0]}
         onChange={searchCity}
         onItemSubmit={(str_query) => selectCity(1, str_query)}
         id="searchbar"
