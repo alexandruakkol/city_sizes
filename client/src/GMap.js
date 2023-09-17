@@ -33,7 +33,7 @@ const containerStyle = {
 
       querystring = querystring.toLowerCase();
 
-      const geo_url = `https://nominatim.openstreetmap.org/search?q=${querystring}&format=jsonv2&polygon_geojson=1`
+      const geo_url = `https://nominatim.openstreetmap.org/search?city=${querystring}&format=jsonv2&polygon_geojson=1`
       
       const geo_res = await axios.get(geo_url).catch(err => console.log(err));
 
@@ -45,17 +45,18 @@ const containerStyle = {
         coord = {lat: place.lat*1, lng:place.lon*1};
         break;
       }
-      console.log(geojson, coord)
+      if(! (geojson && coord) ){
+        geojson = geo_res?.data[0]?.geojson;
+        coord = {lat: geo_res.data[0]?.lat*1, lng:geo_res.data[0]?.lon*1}
+      }
       if(! (geojson && coord) ) return showError('No city data.');
 
-      console.log(`geojson${input_id} ${querystring}`, geojson.coordinates)
       console.log({geo_res})
       //const centroid = getCentroidCoords(geojson.coordinates[0]);
       window.citySizes.centroids[input_id] = coord;
       
       if(input_id === 1) {
         const translation_vector = getTranslationVector();
-        console.log({translation_vector})
         geojson.coordinates = translateCoords(geojson.coordinates, translation_vector);
         if(geojson.coordinates.length > 1) geojson.type="MultiPolygon";
       }
@@ -88,10 +89,8 @@ const containerStyle = {
           strokeWeight: 2
         });
       });
-      
-      if(input_id === 1) return;
 
-      const bounds = new window.google.maps.LatLngBounds(coord);
+      const bounds = new window.google.maps.LatLngBounds(window.citySizes.centroids[0]);
       map.fitBounds(bounds);
       map.setZoom(10);
 
@@ -107,10 +106,9 @@ const containerStyle = {
 
     function translateCoords(pointsA, translation_vector){
       const results = [];
-
       for(let zone of pointsA){
         const newPoints = [];
-        if(pointsA.length > 1) zone = zone[0]; // multipolygon support
+        if(pointsA.length > 1 && pointsA[0].length === 1) zone = zone[0]; // multipolygon support
         for(const point of zone){
           const newPoint = [];
           newPoint.push(point[0] + translation_vector.y);
@@ -121,7 +119,6 @@ const containerStyle = {
         else results.push([newPoints]); // multipolygon support
       }
       return results;
-
     }
 
     const onLoad = React.useCallback(function callback(map) {
