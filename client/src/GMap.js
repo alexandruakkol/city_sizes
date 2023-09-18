@@ -129,7 +129,7 @@ const containerStyle = {
 
     function makeGeoObj(input_id, geojson){
 
-      const color = input_id === 0 ? 'darkgreen' : 'red';
+      const color = input_id === 0 ? '#dd03ff' : 'red';
 
       return {
         "type": "FeatureCollection",
@@ -145,6 +145,20 @@ const containerStyle = {
 
     const onLoad = React.useCallback(function callback(map) {
       setMap(map);
+      console.log({map});
+
+      //setting map tint
+      let bounds = new window.google.maps.LatLngBounds(
+        {lat: -84.999999,lng:-179.999999},{lat: 84.999999,lng:179.999999})
+
+      new window.google.maps.Rectangle({
+          bounds: bounds,
+          fillColor: "black",
+          fillOpacity: 0.2,
+          strokeWeight: 0,
+          map: map
+      });
+
     }, []);
   
     const onUnmount = React.useCallback(function callback(map) {
@@ -155,9 +169,14 @@ const containerStyle = {
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={2}
+        zoom={2.5}
         onUnmount={onUnmount}
         onLoad={onLoad}
+        options={{
+          streetViewControl: false, 
+          fullscreenControl:false, 
+          mapTypeControlOptions:{position:window.google.maps.ControlPosition.RIGHT_TOP}
+        }}
       >
         <HomeCard getPolygon={getPolygon}></HomeCard>
       </GoogleMap>
