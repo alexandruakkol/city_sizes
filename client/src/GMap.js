@@ -129,7 +129,7 @@ const containerStyle = {
 
     function makeGeoObj(input_id, geojson){
 
-      const color = input_id === 0 ? '#dd03ff' : 'red';
+      const color = input_id === 0 ? 'green' : 'red';
 
       return {
         "type": "FeatureCollection",
