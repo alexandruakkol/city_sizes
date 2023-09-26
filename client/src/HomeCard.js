@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Autocomplete } from '@mantine/core';
-import { IconAt } from '@tabler/icons-react';
+import { IconMapSearch } from '@tabler/icons-react';
 import axios from 'axios';
 
 const HomeCard = (props) => {
@@ -35,7 +35,7 @@ const HomeCard = (props) => {
         onChange={searchCity}
         onItemSubmit={(str_query) => selectCity(0, str_query)}
         id="searchbar"
-        icon={<IconAt size="0.8rem" />}
+        icon={<IconMapSearch size="1.3rem" />}
         placeholder="ex. New York"
         data={autocomp_data}
       />
@@ -44,8 +44,8 @@ const HomeCard = (props) => {
         onChange={searchCity}
         onItemSubmit={(str_query) => selectCity(1, str_query)}
         id="searchbar"
-        icon={<IconAt size="0.8rem" />}
-        placeholder="ex. New York"
+        icon={<IconMapSearch size="1.3rem" />}
+        placeholder="ex. Amsterdam"
         data={autocomp_data}
       />
     </div>
