@@ -1,7 +1,15 @@
 const express = require('express');
 const {Client} = require('pg');
 const cors = require('cors');
-const dbconfig = require('./keys.json');
+require('dotenv').config();
+
+const {DB_HOST, DB_PORT, DB_DATABASE, DB_PASSWORD} = process.env;
+const dbconfig = {
+    host:DB_HOST,
+    port:DB_PORT,
+    database:DB_DATABASE,
+    password:DB_PASSWORD
+};
 
 const client = new Client(dbconfig);
 client.connect();

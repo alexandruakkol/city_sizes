@@ -2,7 +2,6 @@ import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import React from 'react';
 import HomeCard from './HomeCard';
 import axios from 'axios';
-import keys from './keys.json';
 
 const containerStyle = {
     width: '100%',
@@ -16,10 +15,9 @@ const containerStyle = {
   
   function GMap() {
     const [map, setMap] = React.useState(null);
-
     const { isLoaded } = useJsApiLoader({
       id: 'google-map-script',
-      googleMapsApiKey: keys.googleMapsApiKey
+      googleMapsApiKey: process.env.REACT_APP_GMAPS_API_KEY
     });
 
     async function showError(err){
