@@ -3,12 +3,13 @@ const {Client} = require('pg');
 const cors = require('cors');
 require('dotenv').config();
 
-const {DB_HOST, DB_PORT, DB_DATABASE, DB_PASSWORD} = process.env;
+const {DB_HOST, DB_PORT, DB_DATABASE, DB_PASSWORD, DB_USER} = process.env;
 const dbconfig = {
     host:DB_HOST,
     port:DB_PORT,
     database:DB_DATABASE,
-    password:DB_PASSWORD
+    password:DB_PASSWORD,
+    user:DB_USER
 };
 
 const client = new Client(dbconfig);
