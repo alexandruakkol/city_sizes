@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Autocomplete } from '@mantine/core';
 import { IconMapSearch } from '@tabler/icons-react';
+
 import axios from 'axios';
 
 const HomeCard = (props) => {
@@ -12,7 +13,7 @@ const HomeCard = (props) => {
 
     if(autocomp_data.includes(string_query) || !string_query.length) return;
 
-    const query_res = await axios.get(`http://localhost:8001/api/cities?q=${string_query}`)
+    const query_res = await axios.get(`http://citysizes.com:8001/api/cities?q=${string_query}`)
       .catch(err => console.log(err));
 
     if(!query_res?.data) return;
@@ -30,7 +31,7 @@ const HomeCard = (props) => {
   return (
     <div id="home-card">
       <h3 id="title">City Sizes</h3>
-
+  
       <Autocomplete
         onChange={searchCity}
         onItemSubmit={(str_query) => selectCity(0, str_query)}

@@ -68,3 +68,8 @@
 .mantine-Autocomplete-input{
   margin-bottom:20px;
 }
+#alert-div{
+  display: flex;
+  width: 100vw;
+  justify-content: center;
+}

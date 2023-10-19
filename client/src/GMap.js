@@ -2,6 +2,8 @@ import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import React from 'react';
 import HomeCard from './HomeCard';
 import axios from 'axios';
+import { Alert,rem } from '@mantine/core';
+import { IconX } from '@tabler/icons-react';
 
 const containerStyle = {
     width: '100%',
@@ -15,23 +17,35 @@ const containerStyle = {
   
   function GMap() {
     const [map, setMap] = React.useState(null);
+    const [error, setError] = React.useState({});
+    const [isErrorShown, setIsErrorShown] = React.useState(false);
+
     const { isLoaded } = useJsApiLoader({
       id: 'google-map-script',
       googleMapsApiKey: process.env.REACT_APP_GMAPS_API_KEY
     });
 
-    async function showError(err){
-      alert(err);
-      //TODO: tidy
+    async function showClientError(err, isFatal=false){
+      if(isFatal){
+        setError({title:'Error', text:`Something went wrong. Code: ${err}`});
+      } else {
+        setError({title:'No city data', text:`Data for city ${err} is not available.`});
+      }
+      displayError();
+    }
+
+    function displayError(){
+      setIsErrorShown(true);
+      setTimeout(() => {setIsErrorShown(false)}, 8000);
     }
 
     async function getPolygon(input_id, querystring){
 
-      if(!querystring?.length) return showError('No querystring');
+      if(!querystring?.length) return showClientError('No querystring', true);
 
-      querystring = querystring.toLowerCase();
+      const lower_querystring = querystring.toLowerCase();
 
-      const geo_url = `https://nominatim.openstreetmap.org/search?city=${querystring}&format=jsonv2&polygon_geojson=1`
+      const geo_url = `https://nominatim.openstreetmap.org/search?city=${lower_querystring}&format=jsonv2&polygon_geojson=1`
       
       const geo_res = await axios.get(geo_url).catch(err => console.log(err));
 
@@ -43,12 +57,17 @@ const containerStyle = {
         coord = {lat: place.lat*1, lng:place.lon*1};
         break;
       }
+
       if(! (geojson && coord) ){
         geojson = geo_res?.data[0]?.geojson;
         coord = {lat: geo_res.data[0]?.lat*1, lng:geo_res.data[0]?.lon*1}
       }
-      if(! (geojson && coord) ) return showError('No city data.');
+      
+      if( !( coord && geojson?.coordinates?.length )) 
+        return showClientError(querystring, true);
 
+      if( geojson?.type === 'Point' ) showClientError(querystring);
+        
       window.citySizes.centroids[input_id] = coord;
       placePolygon(input_id, geojson);
 
@@ -73,7 +92,7 @@ const containerStyle = {
       if( (input_id === 1) || isReplacingSecond ) {
         const translation_vector = getTranslationVector(isReplacingSecond);
         geojson.coordinates = translateCoords(geojson.coordinates, translation_vector);
-        if(geojson.coordinates.length > 1) geojson.type = "MultiPolygon";
+                if(geojson.coordinates.length > 1) geojson.type = "MultiPolygon";
       }
 
       const geoObj = makeGeoObj(input_id, geojson);
@@ -102,32 +121,44 @@ const containerStyle = {
     function getTranslationVector(isReplacingSecond){
       const centroidA = window.citySizes.centroids[0];
       const centroidB = isReplacingSecond ? window.citySizes.geojson_0.centroid : window.citySizes.centroids[1];
-      if(!(centroidA && centroidB) || isNaN(centroidA.lat + centroidB.lng)) return showError('No centroids');
+      if(!(centroidA && centroidB) || isNaN(centroidA.lat + centroidB.lng)) return showClientError('No centroids', true);
       return {x: (centroidA.lat - centroidB.lat), y: (centroidA.lng - centroidB.lng)};
     }
 
     function translateCoords(pointsA, translation_vector){
       const results = [];
+
       for(let zone of pointsA){
-        const newPoints = [];
+        let newPoints = [];
         if(pointsA.length > 1 && pointsA[0].length === 1) zone = zone[0]; // multipolygon support
-        for(const point of zone){
-          const newPoint = [];
-          newPoint.push(point[0] + translation_vector.y);
-          newPoint.push(point[1] + translation_vector.x);
-          newPoints.push(newPoint);
-        }
+        runCoords(zone);
+
         if(pointsA.length === 1) results.push(newPoints); 
         else results.push([newPoints]); // multipolygon support
-      }
+
+        function runCoords(zone){
+          if( !Array.isArray(zone) ) return; 
+          for(const point of zone){
+            const newPoint = [];
+
+            if(typeof point[0] === 'object') // multipolygon^2 support
+              return runCoords(point);
+  
+            newPoint.push(point[0] + translation_vector.y);
+            newPoint.push(point[1] + translation_vector.x);
+            
+            newPoints.push(newPoint)
+          }
+        } //end runCoords
+      } //end zone for
+      
       return results;
     }
 
     function makeGeoObj(input_id, geojson){
 
       const color = input_id === 0 ? 'green' : 'red';
-
-      return {
+      const geoObj = {
         "type": "FeatureCollection",
         "features": [
           {
@@ -137,6 +168,7 @@ const containerStyle = {
           }
         ]
       };
+      return geoObj;
     };
 
     const onLoad = React.useCallback(function callback(map) {
@@ -155,26 +187,36 @@ const containerStyle = {
       });
 
     }, []);
-  
+
     const onUnmount = React.useCallback(function callback(map) {
 
     }, []);
+
+  const xIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
+
   
     return isLoaded ? (
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={2.5}
-        onUnmount={onUnmount}
-        onLoad={onLoad}
-        options={{
-          streetViewControl: false, 
-          fullscreenControl:false, 
-          mapTypeControlOptions:{position:window.google.maps.ControlPosition.RIGHT_TOP}
-        }}
-      >
-        <HomeCard getPolygon={getPolygon}></HomeCard>
-      </GoogleMap>
+      <>
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={center}
+          zoom={2.5}
+          onUnmount={onUnmount}
+          onLoad={onLoad}
+          options={{
+            streetViewControl: false, 
+            fullscreenControl:false, 
+            mapTypeControlOptions:{position:window.google.maps.ControlPosition.RIGHT_TOP}
+          }}
+        >
+          <div id='alert-div'>
+            {isErrorShown ? <Alert icon={xIcon} color="red" title={error.title}>
+              {error.text}
+            </Alert> : <></>}
+          </div>
+          <HomeCard getPolygon={getPolygon}></HomeCard>
+        </GoogleMap>
+      </>
     ) : <></>
   }
   
