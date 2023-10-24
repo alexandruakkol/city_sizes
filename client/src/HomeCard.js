@@ -13,7 +13,7 @@ const HomeCard = (props) => {
 
     if(autocomp_data.includes(string_query) || !string_query.length) return;
 
-    const query_res = await axios.get(`https://citysizes.com:8001/api/cities?q=${string_query}`)
+    const query_res = await axios.get(`https://citysizes.com/api/?q=${string_query}`)
       .catch(err => console.log(err));
 
     if(!query_res?.data) return;
