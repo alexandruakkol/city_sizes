@@ -215,6 +215,7 @@ const containerStyle = {
             </Alert> : <></>}
           </div>
           <HomeCard getPolygon={getPolygon}></HomeCard>
+          <div id="custom-attribution">Map data: Google, Boundaries data: OpenStreetMap</div>
         </GoogleMap>
       </>
     ) : <></>

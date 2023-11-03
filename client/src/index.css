@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+#custom-attribution {
+  position: absolute;
+  min-width:350px;
+  bottom: 0px;
+  right: 0px;
+  background-color: #aac9d3;
+  border: 1px solid #ccc;
+  font-size: 11px;
+  z-index: 1;
+}
