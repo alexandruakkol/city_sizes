@@ -1,6 +1,6 @@
 # Citysizes
-### compare the sizes of cities
+## Compare the size of cities on an interactive map.
 
-citysizes.com
+Deployed on: [Citysizes.com](https://www.citysizes.com)
 
-[citysizes.com]: <https://citysizes.com>
+Built with React, Postgres, and Google Maps API.
