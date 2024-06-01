@@ -8,4 +8,4 @@ Deployed on: [Citysizes.com](https://www.citysizes.com)
 
 Built with React, Postgres, and Google Maps API.
 
-<img width="1915" alt="citysizes" src="https://github.com/alexandruakkol/city_sizes/assets/96371551/d70ee621-28de-4a72-bc5f-20d75cfd84a7">
+<img width="1920" alt="csizes" src="https://github.com/alexandruakkol/city_sizes/assets/96371551/47e0b367-13bd-4ca9-bfb3-e6349618b436">
