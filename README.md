@@ -1,6 +1,9 @@
 # Citysizes
 ## Compare the size of cities on an interactive map.
 
+Overlap administrative city boundaries to compare size.
+Geo coordinates from OpenStreetMap.
+
 Deployed on: [Citysizes.com](https://www.citysizes.com)
 
 Built with React, Postgres, and Google Maps API.
