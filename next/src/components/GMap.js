@@ -1,3 +1,4 @@
+'use client'
 import { GoogleMap, Polygon, useJsApiLoader } from '@react-google-maps/api';
 import React, {useEffect} from 'react';
 import HomeCard from './HomeCard';
@@ -36,7 +37,6 @@ const center = {
       if(!props.polygon.value) return;
       getPolygon(props.polygon.input_id, props.polygon.value);
     }, [props.polygon]);
-
 
     const [map, setMap] = React.useState(null);
     const [error, setError] = React.useState({});
