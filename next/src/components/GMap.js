@@ -1,4 +1,3 @@
-'use client'
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import React, {useEffect} from 'react';
 import HomeCard from './HomeCard';
