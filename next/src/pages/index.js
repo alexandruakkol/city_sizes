@@ -11,8 +11,6 @@ function App() {
           name="description"
           content="City size comparison tool. Compare city sizes on a map! We use data from maps of towns and cities."
         />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-CYVR2V7CTR"></script>
-        <script src="./gtag.js"></script>
       </Head>
       <MantineProvider>
         <GMap></GMap>
