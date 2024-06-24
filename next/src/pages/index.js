@@ -1,8 +1,13 @@
 import GMap from '../components/GMap.js';
 import { MantineProvider } from '@mantine/core';
 import Head from 'next/head';
+import HomeCard from '../components/HomeCard.js';
+import {useState} from 'react';
 
 function App() {
+
+  const [polygon, setPolygon] = useState({});
+
   return (
     <div className="App">
       <Head>
@@ -13,7 +18,8 @@ function App() {
         />
       </Head>
       <MantineProvider>
-        <GMap></GMap>
+        <HomeCard setPolygon={setPolygon}></HomeCard>
+        <GMap polygon={polygon}></GMap>
       </MantineProvider>
     </div>
   );

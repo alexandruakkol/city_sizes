@@ -1,4 +1,4 @@
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, Polygon, useJsApiLoader } from '@react-google-maps/api';
 import React, {useEffect} from 'react';
 import HomeCard from './HomeCard';
 import axios from 'axios';
@@ -16,7 +16,7 @@ const center = {
   lng: 10
 };
   
-  function GMap() {
+  function GMap(props) {
 
     useEffect(() => {
       if (typeof window !== 'undefined') {
@@ -31,6 +31,12 @@ const center = {
           };
       }
     }, []);
+
+    useEffect(() => {
+      if(!props.polygon.value) return;
+      getPolygon(props.polygon.input_id, props.polygon.value);
+    }, [props.polygon]);
+
 
     const [map, setMap] = React.useState(null);
     const [error, setError] = React.useState({});
@@ -230,7 +236,7 @@ const center = {
               {error.text}
             </Alert> : <></>}
           </div>
-          <HomeCard getPolygon={getPolygon}></HomeCard>
+          {/* <HomeCard getPolygon={getPolygon}></HomeCard> */}
           <div id="custom-attribution">
             Map data: 
             ©2024 <a target="_blank" href="https://www.google.com/intl/en-US_US/help/terms_maps/">Google</a>,

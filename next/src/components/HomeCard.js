@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Autocomplete } from '@mantine/core';
+import { Autocomplete, Button, Modal, Center } from '@mantine/core';
 import { IconMapSearch } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 
 import axios from 'axios';
 
@@ -8,6 +9,7 @@ const HomeCard = (props) => {
 
   const [autocomp_data, setAutocomp_data] = useState([]);
   const [inputs, setInputs] = useState({});
+  const [opened, { open, close }] = useDisclosure(false);
 
   async function searchCity(string_query){
 
@@ -25,11 +27,28 @@ const HomeCard = (props) => {
     setInputs({...inputs, [input_id]:autocomp_choice});
     const other_input_id = Number(!input_id);
     if(inputs[other_input_id] === autocomp_choice) return; //TODO: global showError
-    props.getPolygon(input_id, autocomp_choice.value);
+    props.setPolygon({input_id, value:autocomp_choice.value});
   }
 
   return (
     <div id="home-card">
+        <Modal.Root opened={opened} onClose={close} size='lg' overlayProps={{'background-color':'black'}} withCloseButton={true}>
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header style={{backgroundColor:'#09094de6'}}>
+            <Modal.Title>
+              <h2 id="title" style={{color:'antiquewhite'}}>City Sizes</h2>
+            </Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body>
+            <p>Welcome to <b>City Sizes</b>, your go-to web app for visualizing and comparing the sizes of cities around the world. Our platform provides an intuitive and interactive experience, allowing users to easy <b>city size comparison</b>.</p>
+            <p>Whether you're curious about how your hometown stacks up against major metropolitan areas or you're planning a trip and want to understand the scale of your destination, our tool offers a comprehensive solution for all your city size comparison needs.</p>
+            <p>The maps of towns and city boundaries are administrative, provided by OpenStreetMap. Not all cities are available.</p>
+            <p>Contact us at support@citysizes.com</p></Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+
       <h1 id="title">City Sizes</h1>
       <h4 id="subtitle">city size comparison</h4>
   
@@ -50,6 +69,13 @@ const HomeCard = (props) => {
         placeholder="ex. Amsterdam"
         data={autocomp_data}
       />
+      <Button       
+        variant="gradient"
+        gradient={{ from: 'blue', to: 'grape', deg: 90 }} 
+        onClick={open}
+      >
+        About
+      </Button>
     </div>
 
   )
