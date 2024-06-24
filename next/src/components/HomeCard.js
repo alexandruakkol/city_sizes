@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Autocomplete, Button, Modal, Center } from '@mantine/core';
+import { Autocomplete, Button, Modal } from '@mantine/core';
 import { IconMapSearch } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 
@@ -43,7 +43,7 @@ const HomeCard = (props) => {
           </Modal.Header>
           <Modal.Body>
             <p>Welcome to <b>City Sizes</b>, your go-to web app for visualizing and comparing the sizes of cities around the world. Our platform provides an intuitive and interactive experience, allowing users to easy <b>city size comparison</b>.</p>
-            <p>Whether you're curious about how your hometown stacks up against major metropolitan areas or you're planning a trip and want to understand the scale of your destination, our tool offers a comprehensive solution for all your city size comparison needs.</p>
+            <p>Whether you&apos;re curious about how your hometown stacks up against major metropolitan areas or you&apos;re planning a trip and want to understand the scale of your destination, our tool offers a comprehensive solution for all your city size comparison needs.</p>
             <p>The maps of towns and city boundaries are administrative, provided by OpenStreetMap. Not all cities are available.</p>
             <p>Contact us at support@citysizes.com</p></Modal.Body>
         </Modal.Content>
