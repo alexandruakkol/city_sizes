@@ -30,7 +30,7 @@ const HomeCard = (props) => {
 
   return (
     <div id="home-card">
-      <h3 id="title">City Sizes</h3>
+      <h1 id="title">City Sizes</h1>
   
       <Autocomplete
         onChange={searchCity}
