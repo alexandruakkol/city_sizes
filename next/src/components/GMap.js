@@ -1,28 +1,45 @@
+'use client'
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
-import React from 'react';
+import React, {useEffect} from 'react';
 import HomeCard from './HomeCard';
 import axios from 'axios';
-import { Alert,rem } from '@mantine/core';
+import { Alert, rem } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 
+
 const containerStyle = {
-    width: '100%',
-    height: '100%'
-  };
-  
-  const center = {
-    lat: 32,
-    lng: 10
-  };
+  width: '100%',
+  height: '100%'
+};
+
+const center = {
+  lat: 32,
+  lng: 10
+};
   
   function GMap() {
+
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        // Client-side only code
+        
+        if(!window.citySizes) 
+          window.citySizes = {
+            centroids:{},
+            features:{},
+            geojson_0:{},
+            geojson_1:{}
+          };
+      }
+    }, []);
+
     const [map, setMap] = React.useState(null);
     const [error, setError] = React.useState({});
     const [isErrorShown, setIsErrorShown] = React.useState(false);
 
     const { isLoaded } = useJsApiLoader({
       id: 'google-map-script',
-      googleMapsApiKey: process.env.REACT_APP_GMAPS_API_KEY
+      googleMapsApiKey: process.env.maps_key
     });
 
     async function showClientError(err, isFatal=false){
@@ -92,9 +109,9 @@ const containerStyle = {
       if( (input_id === 1) || isReplacingSecond ) {
         const translation_vector = getTranslationVector(isReplacingSecond);
         geojson.coordinates = translateCoords(geojson.coordinates, translation_vector);
-                if(geojson.coordinates.length > 1) geojson.type = "MultiPolygon";
+          if(geojson.coordinates.length > 1) geojson.type = "MultiPolygon";
       }
-
+      
       const geoObj = makeGeoObj(input_id, geojson);
       const feature = map.data.addGeoJson(geoObj);
 
@@ -216,7 +233,9 @@ const containerStyle = {
           </div>
           <HomeCard getPolygon={getPolygon}></HomeCard>
           <div id="custom-attribution">
-            Map data: Google, Boundaries data: OpenStreetMap. Contact: support@citysizes.com
+            Map data: 
+            ©2024 <a target="_blank" href="https://www.google.com/intl/en-US_US/help/terms_maps/">Google</a>,
+            Boundaries data: <a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Contact: support@citysizes.com
           </div>
         </GoogleMap>
       </>

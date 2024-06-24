@@ -50,20 +50,26 @@
 
 #home-card{
   position: absolute;
-  width:300px;
-  background-color: #09094d;
+  width:270px;
+  background-color: #09094de6;
   color:antiquewhite;
   z-index: 1;
-  margin-top: 60px;
+  margin-top: 40px;
   margin-left: 10px;
   border-radius:12px;
   padding: 10px;
-  padding-bottom: 20px;
+  padding-bottom: 7px;
 }
 
 #title{
   font-family: 'Noto Serif Display', serif;
-  font-size:26px;
+  margin-top:12px;
+  margin-bottom:10px;
+}
+#subtitle{
+  margin:0;
+  margin-bottom:15px;
+  font-size:12px;
 }
 .mantine-Autocomplete-input{
   margin-bottom:20px;

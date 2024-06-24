@@ -31,6 +31,7 @@ const HomeCard = (props) => {
   return (
     <div id="home-card">
       <h1 id="title">City Sizes</h1>
+      <h4 id="subtitle">city size comparison</h4>
   
       <Autocomplete
         onChange={searchCity}
