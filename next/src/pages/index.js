@@ -11,12 +11,17 @@ function App() {
   return (
     <div className="App">
       <Head>
-        <title>City Sizes</title>
+        <title>City Sizes | Compare city sizes on a map</title>
         <meta
           name="description"
           content="City size comparison tool. Compare city sizes on a map! We use data from maps of towns and cities."
         />
       </Head>
+      <link
+          rel="canonical"
+          href="https://citysizes.com/"
+          key="canonical"
+      />
       <MantineProvider>
         <HomeCard setPolygon={setPolygon}></HomeCard>
         <GMap polygon={polygon}></GMap>
