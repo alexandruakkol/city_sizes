@@ -1,5 +1,11 @@
-# Citysizes
-## Compare the size of cities on an interactive map.
+<!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
+[![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#citysizes)
+
+# ➤ Citysizes
+
+[![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#compare-the-size-of-cities-on-an-interactive-map)
+
+## ➤ Compare the size of cities on an interactive map.
 
 Overlap administrative city boundaries to compare size.
 Geo coordinates from OpenStreetMap.

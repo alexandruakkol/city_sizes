@@ -19,7 +19,7 @@ const HomeCard = (props) => {
       .catch(err => console.log(err));
 
     if(!query_res?.data) return;
-
+    
     setAutocomp_data(query_res.data.map(city_obj => city_obj.name));
   }
 
@@ -30,9 +30,15 @@ const HomeCard = (props) => {
     props.setPolygon({input_id, value:autocomp_choice.value});
   }
 
+  const optionsFilter = (search) => {
+    return autocomp_data.filter((option) => {
+      return option.toLowerCase().trim().includes(search.toLowerCase().trim());
+    });
+  };
+
   return (
     <div id="home-card">
-        <Modal.Root opened={opened} onClose={close} size='lg' overlayProps={{'background-color':'black'}} withCloseButton={true}>
+        <Modal.Root size='30rem' opened={opened} onClose={close} overlayProps={{'background-color':'black'}} withCloseButton={true}>
         <Modal.Overlay />
         <Modal.Content>
           <Modal.Header style={{backgroundColor:'#09094de6'}}>
@@ -59,6 +65,7 @@ const HomeCard = (props) => {
         icon={<IconMapSearch size="1.3rem" />}
         placeholder="ex. New York"
         data={autocomp_data}
+        filter={optionsFilter}
       />
       <Autocomplete
         disabled={!inputs[0]}
@@ -68,6 +75,7 @@ const HomeCard = (props) => {
         icon={<IconMapSearch size="1.3rem" />}
         placeholder="ex. Amsterdam"
         data={autocomp_data}
+        filter={optionsFilter}
       />
       <Button       
         variant="gradient"
